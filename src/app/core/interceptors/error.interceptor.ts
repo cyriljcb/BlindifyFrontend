@@ -11,7 +11,7 @@ export const errorInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, n
       if (error.status === 401) {
         // Token invalide ou expiré
         console.warn('401 Unauthorized – déconnexion...');
-        // ou refresh token 
+        // fonction de refresh token 
       } else if (error.status >= 400 && error.status < 500) {
         console.error('Erreur client', error.message);
       } else if (error.status >= 500) {

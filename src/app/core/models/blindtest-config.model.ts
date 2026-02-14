@@ -1,8 +1,6 @@
-export interface Playlist {
-  id: string;
-  name: string;
-  description?: string;
-  image?: string;
-  tracks: number;
-  owner: string;
+export interface BlindtestConfig{
+    playlistId : string,
+    tracks : number,
+    revealDuration: number,
+    discoverDuration : number
 }

@@ -1,1 +1,49 @@
-<p>playlists works!</p>
+<div class="blindify-container">
+  <nav class="top-nav">
+    <button class="back-button" (click)="goBack()" title="Retour">
+      <span class="arrow">←</span> Menu principal
+    </button>
+    
+    <div class="logo-mini" (click)="goBack()" title="Aller à l'accueil">
+      🎧 Blindify
+    </div>
+  </nav>
+
+  <header class="header">
+    <h1>{{ mode === 'play' ? 'Choisir une playlist' : 'Thématiques' }}</h1>
+    <p>{{ mode === 'play' ? 'Sélectionnez une playlist pour commencer le jeu' : 'Sélectionnez une playlist pour voir les morceaux' }}</p>
+  </header>
+
+  @if (isLoading) {
+    <div class="loader-container">
+      <div class="spinner"></div>
+      <p>Chargement de votre bibliothèque...</p>
+    </div>
+  } @else if (errorMessage) {
+    <div class="error-container">
+      <div class="error-icon">⚠️</div>
+      <p>{{ errorMessage }}</p>
+      <button class="btn-retry" (click)="retry()">Réessayer</button>
+    </div>
+  } @else {
+    <div class="playlist-grid">
+      @for (playlist of playlists; track playlist.id) {
+        <div class="playlist-card" (click)="selectPlaylist(playlist)">
+          <div class="card-image">
+            <img [src]="playlist.imageUrl || 'img/default.png'" [alt]="playlist.name">
+            <div class="play-overlay">
+              <span class="play-icon">{{ mode === 'play' ? '🎮' : '▶' }}</span>
+            </div>
+          </div>
+          <div class="card-info">
+            <h3>{{ playlist.name }}</h3>
+          </div>
+        </div>
+      } @empty {
+        <div class="empty-state">
+          <p>Aucune playlist disponible pour le moment.</p>
+        </div>
+      }
+    </div>
+  }
+</div>

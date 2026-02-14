@@ -1,0 +1,49 @@
+<div class="blindify-page-wrapper">
+  <nav class="top-nav">
+    <button class="back-button" (click)="goBack()" title="Retour">
+      <span class="arrow">←</span> Retour aux playlists
+    </button>
+    
+    <div class="logo-mini" (click)="goToHome()" title="Aller à l'accueil">
+      🎧 Blindify
+    </div>
+  </nav>
+
+  <div class="tracks-container">
+    <div class="header-row">
+      <h2>Musiques de la playlist</h2>
+      <span class="track-count">{{ tracks.length }} titres</span>
+    </div>
+
+    <div class="list-header">
+      <span>#</span>
+      <span>Titre</span>
+      <span class="text-right">Durée</span>
+    </div>
+
+    <ul class="tracks-list">
+      @for (track of tracks; track track.id; let i = $index) {
+        <li class="track-item">
+          <div class="track-index">{{ i + 1 }}</div>
+          
+          <img
+            class="track-cover"
+            [src]="track.imageUrl || 'img/default.png'"
+            alt="cover"
+          >
+
+          <div class="track-info">
+            <span class="track-title">{{ track.name }}</span>
+            <span class="track-artists">
+              {{ track.artistNames ? track.artistNames.join(', ') : 'Artiste inconnu' }}
+            </span>
+          </div>
+
+          <span class="track-duration">
+            {{ formatDuration(track.durationMs) }}
+          </span>
+        </li>
+      }
+    </ul>
+  </div>
+</div>

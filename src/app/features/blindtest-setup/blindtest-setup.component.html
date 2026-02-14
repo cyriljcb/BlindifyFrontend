@@ -1,1 +1,108 @@
-<p>blindtest-setup works!</p>
+<div class="blindify-page-wrapper">
+  <nav class="top-nav">
+    <button class="back-button" (click)="goBack()">
+      <span class="arrow">←</span> Annuler
+    </button>
+    <div class="logo-mini">🎧 Blindify</div>
+  </nav>
+
+  <div class="setup-container">
+    <header class="setup-header">
+      <h1>Configuration du Blindtest</h1>
+      <p>Préparez votre session de jeu</p>
+    </header>
+
+    <div class="setup-card">
+      
+      <!-- ✅ SECTION SÉLECTION PLAYLIST -->
+      <section class="setup-section">
+        <h3>🎵 Choisissez votre playlist</h3>
+        
+        @if (isLoadingPlaylists) {
+          <div class="loading-playlists">
+            <div class="spinner-small"></div>
+            <p>Chargement des playlists...</p>
+          </div>
+        } @else {
+          <div class="playlists-scroll">
+            @for (playlist of playlists; track playlist.id) {
+              <div 
+                class="playlist-mini-card" 
+                [class.selected]="selectedPlaylistId === playlist.id"
+                (click)="selectPlaylist(playlist.id)">
+                <img 
+                  [src]="playlist.imageUrl || 'assets/images/default.jpg'" 
+                  [alt]="playlist.name"
+                  class="playlist-mini-img">
+                <div class="playlist-mini-info">
+                  <h4>{{ playlist.name }}</h4>
+                  <p>{{ playlist.tracks }} titres</p>
+                </div>
+                @if (selectedPlaylistId === playlist.id) {
+                  <span class="check-badge">✓</span>
+                }
+              </div>
+            }
+          </div>
+        }
+      </section>
+
+      <!-- Nombre de questions -->
+      <section class="setup-section">
+        <h3>Nombre de questions</h3>
+        <div class="choice-grid">
+          @for (count of [5, 10, 20, 50]; track count) {
+            <button 
+              class="choice-btn" 
+              [class.active]="questionCount === count"
+              (click)="setQuestionCount(count)">
+              {{ count }}
+            </button>
+          }
+        </div>
+      </section>
+
+      <!-- Temps d'écoute -->
+      <section class="setup-section">
+        <div class="section-header">
+          <h3>Temps d'écoute <small>(recherche)</small></h3>
+          <span class="value-display">{{ discoverTime }}s</span>
+        </div>
+        <input 
+          type="range" 
+          min="5" 
+          max="60" 
+          step="5" 
+          [value]="discoverTime"
+          (input)="updateDiscoverTime($event)"
+          class="spotify-slider">
+      </section>
+
+      <!-- Temps de révélation -->
+      <section class="setup-section">
+        <div class="section-header">
+          <h3>Temps de révélation <small>(résultat)</small></h3>
+          <span class="value-display">{{ revealTime }}s</span>
+        </div>
+        <input 
+          type="range" 
+          min="5" 
+          max="30" 
+          step="5" 
+          [value]="revealTime"
+          (input)="updateRevealTime($event)"
+          class="spotify-slider reveal-slider">
+      </section>
+
+      <!-- Bouton démarrer -->
+      <div class="action-area">
+        <button 
+          class="start-btn" 
+          (click)="startBlindtest()"
+          [disabled]="!selectedPlaylistId || isLoadingPlaylists">
+          C'EST PARTI !
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

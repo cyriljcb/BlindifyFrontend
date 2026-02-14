@@ -1,1 +1,52 @@
-<p>home works!</p>
+<div class="home-container">
+  <header class="hero">
+    <div class="logo-wrapper">
+      <span class="icon">🎧</span>
+      <h1>Blindify</h1>
+    </div>
+    <p class="subtitle">Le blindtest musical ultime, propulsé par Spotify</p>
+  </header>
+
+  <main class="content-area">
+    @if (isLoading) {
+      <div class="loader-container">
+        <div class="spinner"></div>
+        <p>Synchronisation avec Spotify...</p>
+      </div>
+    } @else {
+      
+      @if (!isAuthenticated) {
+        <div class="login-card">
+          <p>Prêt à tester votre culture musicale ?</p>
+          <button class="btn btn-spotify" (click)="login()">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/1/19/Spotify_logo_without_text.svg" alt="Spotify" width="20">
+            Se connecter à Spotify
+          </button>
+        </div>
+      } @else {
+        <div class="menu-grid">
+          
+          <button class="menu-card action-play" (click)="startGame()">
+            <div class="card-icon">▶️</div>
+            <div class="card-text">
+              <h3>Jouer</h3>
+              <p>Lancer le blindtest</p>
+            </div>
+          </button>
+
+          <button class="menu-card action-playlists" (click)="viewPlaylists()">
+            <div class="card-icon">📻</div>
+            <div class="card-text">
+              <h3>Mes Playlists</h3>
+              <p>Explorer votre bibliothèque</p>
+            </div>
+          </button>          
+        </div>
+      }
+    }
+  </main>
+
+  <footer>
+    <p>© 2026 Blindify • Made for music lovers</p>
+  </footer>
+</div>

@@ -1,0 +1,59 @@
+<div class="play-container">
+  <header class="play-header">
+    <button class="back-btn" (click)="goBack()">← Retour</button>
+    <h1>🎵 Blindtest en cours</h1>
+  </header>
+
+  @if (!isConnected) {
+    <div class="connection-status">
+      <p>⏳ Connexion au serveur...</p>
+    </div>
+  }
+
+  @if (isFinished) {
+    <div class="finished-container">
+      <h2>🎉 Blindtest terminé !</h2>
+      <p>Bravo, vous avez terminé tous les morceaux !</p>
+      <button class="primary-btn" (click)="goBack()">Retour aux playlists</button>
+    </div>
+  } @else {
+    <div class="game-container">
+      
+      <!-- Phase actuelle -->
+      <div class="phase-indicator" [class.discovery]="currentPhase === 'DISCOVERY'" 
+                                   [class.reveal]="currentPhase === 'REVEAL'">
+        @if (currentPhase === 'DISCOVERY') {
+          <span class="phase-emoji">🔍</span>
+          <span class="phase-text">Phase Discovery</span>
+        } @else if (currentPhase === 'REVEAL') {
+          <span class="phase-emoji">🎤</span>
+          <span class="phase-text">Phase Reveal</span>
+        } @else {
+          <span class="phase-text">En attente...</span>
+        }
+      </div>
+
+      <!-- Timer -->
+      <div class="timer">
+        <div class="time-circle">
+          <span class="time-value">{{ timeRemaining }}</span>
+          <span class="time-unit">sec</span>
+        </div>
+      </div>
+
+      <!-- Titre (caché en Discovery) -->
+      <div class="track-info">
+        @if (currentPhase === 'REVEAL') {
+          <h2 class="track-name">{{ currentTrackName }}</h2>
+        } @else {
+          <h2 class="track-name mystery">??? 🎵 ???</h2>
+        }
+      </div>
+
+      <!-- Progression -->
+      <div class="progress-info">
+        <p>Total de morceaux : {{ totalTracks }}</p>
+      </div>
+    </div>
+  }
+</div>

@@ -1,107 +1,60 @@
-<div class="play-container">
-  <header class="play-header">
-    <button class="back-btn" (click)="goBack()">← Retour</button>
-    <h1>🎵 Blindtest en cours</h1>
-  </header>
-
-  @if (!isConnected) {
-    <div class="connection-status">
-      <p>⏳ Connexion au serveur...</p>
-    </div>
-  }
-
-  @if (isFinished) {
-    <div class="finished-container">
-      <div class="trophy-icon">🏆</div>
-      <h2>🎉 Blindtest terminé !</h2>
-      <p class="score-text">Vous avez écouté {{ totalTracks }} morceaux</p>
-      <p class="congrats-text">Bravo pour votre participation !</p>
-      <button class="primary-btn" (click)="goHome()">Retour à l'accueil</button>
-      <button class="secondary-btn" (click)="goBack()">Voir les playlists</button>
-    </div>
-  } @else {
-    <div class="animated-background">
-    <div class="music-particles">
-      @for (particle of particles; track $index) {
-        <div class="particle" 
-             [style.left.%]="particle.x" 
-             [style.animation-delay.s]="particle.delay"
-             [style.animation-duration.s]="particle.duration">
-          {{ particle.emoji }}
-        </div>
-      }
-    </div>
-    
-    <!-- Ondes sonores en arrière-plan -->
-    <div class="sound-waves">
-      @for (wave of [1,2,3]; track $index) {
-        <div class="wave" [style.animation-delay.s]="$index * 0.5"></div>
-      }
-    </div>
+<div class="blindify-page-wrapper" [class.state-reveal]="currentPhase === 'REVEAL'">
+  
+  <div class="game-progress-bar">
+    <div class="fill" [style.width.%]="(currentRound / totalTracks) * 100"></div>
   </div>
 
-  <div class="game-container">
+  <nav class="top-nav">
+    <button class="back-btn" (click)="goBack()">← Quitter</button>
+    <div class="game-status" *ngIf="!isFinished">
+      Titre {{ currentRound }}<span>/{{ totalTracks }}</span>
+    </div>
+    <div class="logo-mini">🎧 Blindify</div>
+  </nav>
+
+  <main class="game-content">
     
-    <!-- Progression -->
-    <div class="progress-badge">
-      <span class="progress-text">{{ currentRound }} / {{ totalTracks }}</span>
-    </div>
-
-    <!-- Phase indicator -->
-    <div class="phase-indicator" 
-         [class.discovery]="currentPhase === 'DISCOVERY'" 
-         [class.reveal]="currentPhase === 'REVEAL'"
-         [class.waiting]="currentPhase === 'WAITING' || !currentPhase">
-      @if (currentPhase === 'DISCOVERY') {
-        <span class="phase-emoji">🔍</span>
-        <span class="phase-text">Phase Discovery</span>
-      } @else if (currentPhase === 'REVEAL') {
-        <span class="phase-emoji">🎤</span>
-        <span class="phase-text">Phase Reveal</span>
-      } @else {
-        <span class="phase-emoji">⏳</span>
-        <span class="phase-text">Préparation...</span>
-      }
-    </div>
-
-    <!-- Timer avec spectre CIRCULAIRE (plus visible) -->
-    @if (currentPhase === 'DISCOVERY') {
-      <div class="timer">
-        <!-- Spectre circulaire autour du timer -->
-        <div class="circular-spectrum">
-          @for (bar of spectrumBars; track $index) {
-            <div class="spectrum-bar" 
-                 [style.transform]="getBarTransform($index, bar)"
-                 [style.height.px]="bar">
-            </div>
-          }
+    @if (isFinished) {
+      <div class="finished-card">
+        <div class="trophy-wrap">🏆</div>
+        <h2>Terminé !</h2>
+        <p>Vous avez parcouru <strong>{{ totalTracks }}</strong> pépites musicales.</p>
+        <div class="actions">
+          <button class="primary-btn" (click)="goHome()">Accueil</button>
+          <button class="secondary-btn" (click)="goBack()">Playlists</button>
         </div>
-        
-        <div class="time-circle">
-          <span class="time-value">{{ timeRemaining }}</span>
-          <span class="time-unit">sec</span>
+      </div>
+    } 
+    
+    @else {
+      <div class="phase-badge" [attr.data-phase]="currentPhase">
+        {{ currentPhase === 'DISCOVERY' ? 'ÉCOUTE EN COURS' : 'RÉVÉLATION' }}
+      </div>
+
+      <div class="visualizer-section">
+        <div class="timer-container" [class.hidden]="currentPhase === 'REVEAL'">
+          <div class="spectrum-ring">
+            @for (bar of spectrumBars; track $index) {
+              <div class="bar" 
+                   [style.transform]="getBarTransform($index, bar)"
+                   [style.height.px]="bar">
+              </div>
+            }
+          </div>
+          <div class="countdown-circle">
+            <span class="seconds">{{ timeRemaining }}</span>
+            <span class="label">SEC</span>
+          </div>
+        </div>
+
+        <div class="reveal-info" [class.active]="currentPhase === 'REVEAL'">
+          <div class="cover-wrapper">
+             <img [src]="currentAlbumCover || 'assets/img/default.png'" alt="Album cover">
+          </div>
+          <h2 class="track-title">{{ currentTrackName }}</h2>
+          <p class="artist-list">{{ formattedArtists }}</p>
         </div>
       </div>
     }
-
-    <!-- Track info -->
-    <div class="track-info">
-      @if (currentPhase === 'REVEAL') {
-        <div class="reveal-container">
-          @if (currentAlbumCover) {
-            <img [src]="currentAlbumCover" [alt]="currentTrackName" class="album-cover">
-          }
-          <h2 class="track-name">{{ currentTrackName }}</h2>
-          @if (currentArtists.length > 0) {
-            <p class="artist-name">{{ formattedArtists }}</p>
-          }
-        </div>
-      } @else if (currentPhase === 'DISCOVERY') {
-        <h2 class="track-name mystery">??? 🎵 ???</h2>
-      } @else {
-        <h2 class="track-name waiting">Chargement...</h2>
-      }
-    </div>
-  </div>
-  }
+  </main>
 </div>

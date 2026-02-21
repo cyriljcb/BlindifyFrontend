@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { BlindtestService } from '../../core/services/blindtest.service';
 import { Playlist } from '../../core/models/playlist.model';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-blindtest-setup',
@@ -18,6 +19,8 @@ export class BlindtestSetupComponent implements OnInit {
   playlists: Playlist[] = [];
   selectedPlaylistId = '';
   isLoadingPlaylists = true;
+  isStarting = false;
+  errorMessage = '';
 
   questionCount = 10;
   discoverTime = 20; 
@@ -66,11 +69,16 @@ export class BlindtestSetupComponent implements OnInit {
     this.router.navigate(['/']);
   }
 
-  startBlindtest(): void {
+  async startBlindtest(): Promise<void> {
     if (!this.selectedPlaylistId) {
       alert('Veuillez sélectionner une playlist');
       return;
     }
+
+    if (this.isStarting) return;
+    
+    this.isStarting = true;
+    this.errorMessage = '';
 
     const config = {
       playlistId: this.selectedPlaylistId,
@@ -79,17 +87,20 @@ export class BlindtestSetupComponent implements OnInit {
       discoveryTimeSec: this.discoverTime
     };
     
-    console.log('🚀 Démarrage du blindtest:', config);
+    console.log('Démarrage du blindtest avec config:', config);
     
-    this.blindtestService.startBlindtest(config).subscribe({
-      next: () => {
-        console.log('✅ Blindtest démarré, redirection vers /play');
-        this.router.navigate(['/play']);
-      },
-      error: (err) => {
-        console.error('❌ Erreur:', err);
-        alert('Impossible de démarrer le blindtest');
-      }
-    });
+    try {
+      await firstValueFrom(this.blindtestService.startBlindtest(config));
+      console.log('Blindtest démarré côté backend');
+      
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      console.log('Navigation vers /play');
+      this.router.navigate(['/play']);
+    } catch (error: any) {
+      console.error('Erreur lors du démarrage:', error);
+      this.errorMessage = 'Impossible de démarrer le blindtest. Vérifiez votre connexion Spotify.';
+      this.isStarting = false;
+    }
   }
 }

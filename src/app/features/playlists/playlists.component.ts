@@ -1,6 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { SpotifyService } from '../../core/services/spotify.service';
+import { BlindtestService } from '../../core/services/blindtest.service';
+import { Playlist } from '../../core/models/playlist.model';
 
 @Component({
   selector: 'app-playlists',
@@ -12,15 +13,14 @@ import { SpotifyService } from '../../core/services/spotify.service';
 export class PlaylistsComponent implements OnInit {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
-  private spotifyService = inject(SpotifyService);
+  private blindtestService = inject(BlindtestService);
 
-  playlists: any[] = [];
+  playlists: Playlist[] = [];
   isLoading = true;
   errorMessage = '';
-  mode: 'browse' | 'play' = 'browse'; // Mode par défaut
+  mode: 'browse' | 'play' = 'browse';
 
   ngOnInit(): void {
-    // Récupérer le mode depuis les query params
     this.route.queryParams.subscribe(params => {
       this.mode = params['mode'] || 'browse';
     });
@@ -30,12 +30,12 @@ export class PlaylistsComponent implements OnInit {
 
   loadPlaylists(): void {
     this.isLoading = true;
-    this.spotifyService.getUserPlaylists().subscribe({
-      next: (data) => {
+    this.blindtestService.getPlaylists().subscribe({
+      next: (data: Playlist[]) => {
         this.playlists = data;
         this.isLoading = false;
       },
-      error: (err) => {
+      error: (err: any) => {
         this.errorMessage = 'Impossible de charger vos playlists';
         this.isLoading = false;
         console.error(err);
@@ -43,7 +43,7 @@ export class PlaylistsComponent implements OnInit {
     });
   }
 
-  selectPlaylist(playlist: any): void {
+  selectPlaylist(playlist: Playlist): void {
     if (this.mode === 'play') {
       // Parcours jeu : aller vers Setup avec la playlist sélectionnée
       this.router.navigate(['/setup'], { 

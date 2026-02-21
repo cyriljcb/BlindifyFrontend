@@ -12,48 +12,96 @@
 
   @if (isFinished) {
     <div class="finished-container">
+      <div class="trophy-icon">🏆</div>
       <h2>🎉 Blindtest terminé !</h2>
-      <p>Bravo, vous avez terminé tous les morceaux !</p>
-      <button class="primary-btn" (click)="goBack()">Retour aux playlists</button>
+      <p class="score-text">Vous avez écouté {{ totalTracks }} morceaux</p>
+      <p class="congrats-text">Bravo pour votre participation !</p>
+      <button class="primary-btn" (click)="goHome()">Retour à l'accueil</button>
+      <button class="secondary-btn" (click)="goBack()">Voir les playlists</button>
     </div>
   } @else {
-    <div class="game-container">
-      
-      <!-- Phase actuelle -->
-      <div class="phase-indicator" [class.discovery]="currentPhase === 'DISCOVERY'" 
-                                   [class.reveal]="currentPhase === 'REVEAL'">
-        @if (currentPhase === 'DISCOVERY') {
-          <span class="phase-emoji">🔍</span>
-          <span class="phase-text">Phase Discovery</span>
-        } @else if (currentPhase === 'REVEAL') {
-          <span class="phase-emoji">🎤</span>
-          <span class="phase-text">Phase Reveal</span>
-        } @else {
-          <span class="phase-text">En attente...</span>
-        }
-      </div>
+    <div class="animated-background">
+    <div class="music-particles">
+      @for (particle of particles; track $index) {
+        <div class="particle" 
+             [style.left.%]="particle.x" 
+             [style.animation-delay.s]="particle.delay"
+             [style.animation-duration.s]="particle.duration">
+          {{ particle.emoji }}
+        </div>
+      }
+    </div>
+    
+    <!-- Ondes sonores en arrière-plan -->
+    <div class="sound-waves">
+      @for (wave of [1,2,3]; track $index) {
+        <div class="wave" [style.animation-delay.s]="$index * 0.5"></div>
+      }
+    </div>
+  </div>
 
-      <!-- Timer -->
+  <div class="game-container">
+    
+    <!-- Progression -->
+    <div class="progress-badge">
+      <span class="progress-text">{{ currentRound }} / {{ totalTracks }}</span>
+    </div>
+
+    <!-- Phase indicator -->
+    <div class="phase-indicator" 
+         [class.discovery]="currentPhase === 'DISCOVERY'" 
+         [class.reveal]="currentPhase === 'REVEAL'"
+         [class.waiting]="currentPhase === 'WAITING' || !currentPhase">
+      @if (currentPhase === 'DISCOVERY') {
+        <span class="phase-emoji">🔍</span>
+        <span class="phase-text">Phase Discovery</span>
+      } @else if (currentPhase === 'REVEAL') {
+        <span class="phase-emoji">🎤</span>
+        <span class="phase-text">Phase Reveal</span>
+      } @else {
+        <span class="phase-emoji">⏳</span>
+        <span class="phase-text">Préparation...</span>
+      }
+    </div>
+
+    <!-- Timer avec spectre CIRCULAIRE (plus visible) -->
+    @if (currentPhase === 'DISCOVERY') {
       <div class="timer">
+        <!-- Spectre circulaire autour du timer -->
+        <div class="circular-spectrum">
+          @for (bar of spectrumBars; track $index) {
+            <div class="spectrum-bar" 
+                 [style.transform]="getBarTransform($index, bar)"
+                 [style.height.px]="bar">
+            </div>
+          }
+        </div>
+        
         <div class="time-circle">
           <span class="time-value">{{ timeRemaining }}</span>
           <span class="time-unit">sec</span>
         </div>
       </div>
+    }
 
-      <!-- Titre (caché en Discovery) -->
-      <div class="track-info">
-        @if (currentPhase === 'REVEAL') {
+    <!-- Track info -->
+    <div class="track-info">
+      @if (currentPhase === 'REVEAL') {
+        <div class="reveal-container">
+          @if (currentAlbumCover) {
+            <img [src]="currentAlbumCover" [alt]="currentTrackName" class="album-cover">
+          }
           <h2 class="track-name">{{ currentTrackName }}</h2>
-        } @else {
-          <h2 class="track-name mystery">??? 🎵 ???</h2>
-        }
-      </div>
-
-      <!-- Progression -->
-      <div class="progress-info">
-        <p>Total de morceaux : {{ totalTracks }}</p>
-      </div>
+          @if (currentArtists.length > 0) {
+            <p class="artist-name">{{ formattedArtists }}</p>
+          }
+        </div>
+      } @else if (currentPhase === 'DISCOVERY') {
+        <h2 class="track-name mystery">??? 🎵 ???</h2>
+      } @else {
+        <h2 class="track-name waiting">Chargement...</h2>
+      }
     </div>
+  </div>
   }
 </div>

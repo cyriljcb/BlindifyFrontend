@@ -3,6 +3,83 @@
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   padding: 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+// Fond animé avec particules et ondes
+.animated-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.music-particles {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+
+  .particle {
+    position: absolute;
+    font-size: 2rem;
+    opacity: 0;
+    animation: floatUp 10s infinite ease-in-out;
+    
+    @keyframes floatUp {
+      0% {
+        bottom: -10%;
+        opacity: 0;
+        transform: translateX(0) rotate(0deg);
+      }
+      10% {
+        opacity: 0.6;
+      }
+      90% {
+        opacity: 0.6;
+      }
+      100% {
+        bottom: 110%;
+        opacity: 0;
+        transform: translateX(50px) rotate(360deg);
+      }
+    }
+  }
+}
+
+.sound-waves {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  .wave {
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    animation: ripple 3s infinite ease-out;
+    
+    @keyframes ripple {
+      0% {
+        width: 300px;
+        height: 300px;
+        opacity: 1;
+      }
+      100% {
+        width: 800px;
+        height: 800px;
+        opacity: 0;
+      }
+    }
+  }
 }
 
 .play-header {
@@ -10,6 +87,8 @@
   align-items: center;
   gap: 1rem;
   margin-bottom: 3rem;
+  position: relative;
+  z-index: 10;
 
   h1 {
     font-size: 2rem;
@@ -36,6 +115,8 @@
   text-align: center;
   padding: 2rem;
   font-size: 1.2rem;
+  position: relative;
+  z-index: 10;
 }
 
 .game-container {
@@ -45,6 +126,25 @@
   gap: 3rem;
   max-width: 600px;
   margin: 0 auto;
+  position: relative;
+  z-index: 10;
+}
+
+.progress-badge {
+  position: absolute;
+  top: 2rem;
+  right: 2rem;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  padding: 0.75rem 1.5rem;
+  border-radius: 50px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  z-index: 100;
+  
+  .progress-text {
+    font-size: 1.5rem;
+    font-weight: 700;
+  }
 }
 
 .phase-indicator {
@@ -69,19 +169,54 @@
     box-shadow: 0 0 30px rgba(251, 146, 60, 0.5);
   }
 
+  &.waiting {
+    background: rgba(156, 163, 175, 0.3);
+    box-shadow: 0 0 30px rgba(156, 163, 175, 0.5);
+  }
+
   .phase-emoji {
     font-size: 2rem;
   }
 }
 
+// Spectre CIRCULAIRE
 .timer {
+  position: relative;
+  width: 400px;
+  height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .circular-spectrum {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+
+    .spectrum-bar {
+      position: absolute;
+      width: 6px;
+      background: linear-gradient(to top, 
+        rgba(52, 211, 153, 1), 
+        rgba(52, 211, 153, 0.3));
+      border-radius: 3px;
+      bottom: 50%;
+      left: 50%;
+      transform-origin: center bottom;
+      transition: height 0.08s ease;
+      box-shadow: 0 0 15px rgba(52, 211, 153, 0.6);
+    }
+  }
+
   .time-circle {
+    position: relative;
+    z-index: 10;
     width: 200px;
     height: 200px;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.15);
     backdrop-filter: blur(10px);
-    border: 4px solid rgba(255, 255, 255, 0.3);
+    border: 4px solid rgba(255, 255, 255, 0.4);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -105,6 +240,7 @@
 .track-info {
   text-align: center;
   min-height: 80px;
+  width: 100%;
 
   .track-name {
     font-size: 2rem;
@@ -115,45 +251,102 @@
       opacity: 0.5;
       font-style: italic;
     }
-  }
-}
 
-.progress-info {
-  text-align: center;
-  opacity: 0.8;
-  font-size: 1.1rem;
+    &.waiting {
+      opacity: 0.6;
+      font-style: italic;
+      font-size: 1.5rem;
+    }
+  }
+
+  .reveal-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    animation: fadeIn 0.5s ease;
+
+    .album-cover {
+      width: 300px;
+      height: 300px;
+      border-radius: 12px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+      object-fit: cover;
+      animation: zoomIn 0.5s ease;
+    }
+
+    .track-name {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin: 0;
+    }
+
+    .artist-name {
+      font-size: 1.5rem;
+      opacity: 0.9;
+      font-weight: 500;
+      margin: 0;
+    }
+  }
 }
 
 .finished-container {
   text-align: center;
   padding: 4rem 2rem;
+  max-width: 600px;
+  margin: 0 auto;
+  animation: fadeIn 0.8s ease;
+  position: relative;
+  z-index: 10;
+
+  .trophy-icon {
+    font-size: 8rem;
+    margin-bottom: 2rem;
+    animation: bounce 1s ease infinite;
+  }
 
   h2 {
     font-size: 3rem;
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
   }
 
-  p {
-    font-size: 1.3rem;
-    margin-bottom: 2rem;
+  .score-text {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+  }
+
+  .congrats-text {
+    font-size: 1.2rem;
+    margin-bottom: 3rem;
     opacity: 0.9;
   }
-}
 
-.primary-btn {
-  background: white;
-  color: #667eea;
-  border: none;
-  padding: 1rem 2rem;
-  border-radius: 12px;
-  font-size: 1.1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
+  .primary-btn, .secondary-btn {
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin: 0.5rem;
 
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+  }
+
+  .primary-btn {
+    background: white;
+    color: #667eea;
+  }
+
+  .secondary-btn {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    backdrop-filter: blur(10px);
   }
 }
 
@@ -165,5 +358,25 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes zoomIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
   }
 }

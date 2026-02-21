@@ -35,16 +35,10 @@ export class HomeComponent {
   }
   
   viewPlaylists(): void {
-    // Mode consultation : voir les playlists et leurs tracks
-    this.router.navigate(['/playlists'], { 
-      queryParams: { mode: 'browse' } 
-    });
+    this.router.navigate(['/playlists']);
   }
   
   startGame():void{
-    // Mode jeu : sélectionner une playlist pour jouer
-    this.router.navigate(['/playlists'], { 
-      queryParams: { mode: 'play' } 
-    });
+    this.router.navigate(['/setup']);
   }
 }

@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { BlindtestService } from '../../core/services/blindtest.service';
 import { Playlist } from '../../core/models/playlist.model';
-import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-blindtest-setup',
@@ -69,7 +68,7 @@ export class BlindtestSetupComponent implements OnInit {
     this.router.navigate(['/']);
   }
 
-  async startBlindtest(): Promise<void> {
+  startBlindtest(): void {
     if (!this.selectedPlaylistId) {
       alert('Veuillez sélectionner une playlist');
       return;
@@ -89,18 +88,19 @@ export class BlindtestSetupComponent implements OnInit {
     
     console.log('Démarrage du blindtest avec config:', config);
     
-    try {
-      await firstValueFrom(this.blindtestService.startBlindtest(config));
-      console.log('Blindtest démarré côté backend');
-      
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      console.log('Navigation vers /play');
-      this.router.navigate(['/play']);
-    } catch (error: any) {
-      console.error('Erreur lors du démarrage:', error);
-      this.errorMessage = 'Impossible de démarrer le blindtest. Vérifiez votre connexion Spotify.';
-      this.isStarting = false;
-    }
+    this.blindtestService.startBlindtest(config).subscribe({
+      next: () => {
+        console.log('Blindtest démarré côté backend');
+      },
+      error: (error: any) => {
+        console.error('Erreur lors du démarrage:', error);
+        if (this.router.url === '/setup') {
+          this.errorMessage = 'Impossible de démarrer le blindtest. Vérifiez votre connexion Spotify.';
+          this.isStarting = false;
+        }
+      }
+    });
+    
+    this.router.navigate(['/play']);
   }
 }

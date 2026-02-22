@@ -45,12 +45,10 @@ export class PlaylistsComponent implements OnInit {
 
   selectPlaylist(playlist: Playlist): void {
     if (this.mode === 'play') {
-      // Parcours jeu : aller vers Setup avec la playlist sélectionnée
       this.router.navigate(['/setup'], { 
         queryParams: { playlistId: playlist.id } 
       });
     } else {
-      // Parcours consultation : aller vers Tracks
       this.router.navigate(['/tracks', playlist.id]);
     }
   }

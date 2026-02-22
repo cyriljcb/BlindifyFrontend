@@ -1,19 +1,15 @@
-// --- VARIABLES ---
 $spotify-green: #1db954;
-//$spotify-green: #121212;
 $bg-black: #121212;
 $text-muted: #b3b3b3;
 $white: #ffffff;
 $reveal-accent: #121212;
 
-// --- MIXINS & RESET ---
 %flex-center {
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-// --- CONTAINER PRINCIPAL ---
 .blindify-page-wrapper {
   min-height: 100vh;
   background: radial-gradient(circle at 20% 0%, rgba($spotify-green, 0.15) 0%, $bg-black 50%);
@@ -29,7 +25,6 @@ $reveal-accent: #121212;
   }
 }
 
-// --- FOND DYNAMIQUE (Remplit le vide) ---
 .background-glow {
   position: fixed;
   inset: 0;
@@ -44,7 +39,6 @@ $reveal-accent: #121212;
   to { transform: scale(1.3) translate(5%, 5%); }
 }
 
-// --- BARRE DE PROGRESSION ---
 .game-progress-bar {
   position: fixed;
   top: 0;
@@ -62,7 +56,6 @@ $reveal-accent: #121212;
   }
 }
 
-// --- NAVIGATION ---
 .top-nav {
   height: 100px;
   padding: 0 3rem;
@@ -142,7 +135,6 @@ $reveal-accent: #121212;
   50% { box-shadow: 0 0 25px rgba($spotify-green, 0.5); }
 }
 
-// --- VISUALIZER & IMPACT ---
 .visualizer-section {
   position: relative;
   width: 100%;
@@ -150,7 +142,6 @@ $reveal-accent: #121212;
   @extend %flex-center;
 }
 
-// Onde de choc lors du reveal
 .impact-waves {
   position: absolute;
   .wave {
@@ -171,7 +162,6 @@ $reveal-accent: #121212;
   100% { transform: scale(3.5); opacity: 0; }
 }
 
-// --- TIMER & SPECTRUM ---
 .timer-container {
   position: relative;
   width: 320px;
@@ -184,7 +174,6 @@ $reveal-accent: #121212;
     pointer-events: none; 
   }
 
-  // Halo pulsant autour du timer
   .pulse-aura {
     position: absolute;
     inset: -40px;
@@ -243,7 +232,6 @@ $reveal-accent: #121212;
   50% { transform: scale(1.15); opacity: 0.7; }
 }
 
-// --- REVEAL INFO ---
 .reveal-info {
   position: absolute;
   opacity: 0;
@@ -296,7 +284,6 @@ $reveal-accent: #121212;
   to { transform: scale(1.1); }
 }
 
-// --- ECRAN DE FIN ---
 .finished-card {
   text-align: center;
   background: rgba(255, 255, 255, 0.03);

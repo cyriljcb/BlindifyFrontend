@@ -22,7 +22,7 @@ export class PlayComponent implements OnInit, OnDestroy {
   private wsService = inject(WebSocketService);
   private router = inject(Router);
 
-  currentPhase: 'DISCOVERY' | 'REVEAL' | 'WAITING' | null = 'WAITING'; // ← Commence en WAITING
+  currentPhase: 'DISCOVERY' | 'REVEAL' | 'WAITING' = 'DISCOVERY'; 
   currentTrackName = '';
   currentArtists: string[] = []; 
   currentAlbumCover = '';
@@ -31,43 +31,38 @@ export class PlayComponent implements OnInit, OnDestroy {
   currentRound = 0;
   isFinished = false;
   isConnected = false;
-  isWaitingForFirstPhase = true; // ← Nouveau flag
+  isWaitingForFirstPhase = true; 
 
-  // Spectre audio - augmenté à 40 barres pour un cercle complet
   spectrumBars: number[] = Array(40).fill(30);
   private spectrumIntervalId: any;
 
-  // Particules musicales flottantes
   particles: Particle[] = [];
 
   private intervalId: any;
 
   ngOnInit(): void {
-    console.log('🎮 [Play] Component initialized');
-
-    // Générer les particules
-    this.generateParticles();
+    console.log(' [Play] Component initialized');
 
     this.wsService.connect();
 
     this.wsService.connection$.subscribe(connected => {
-      console.log('🔌 [Play] Connection status:', connected);
+      console.log(' [Play] Connection status:', connected);
       this.isConnected = connected;
     });
 
     this.wsService.phase$.subscribe(event => {
-      console.log('🎵 [Play] Phase event:', event);
-      this.isWaitingForFirstPhase = false; // ← Première phase reçue
+      console.log('[Play] Phase event:', event);
+      this.isWaitingForFirstPhase = false;
       this.handlePhaseChange(event);
     });
 
     this.wsService.started$.subscribe(event => {
-      console.log('🚀 [Play] Blindtest started:', event);
+      console.log('[Play] Blindtest started:', event);
       this.totalTracks = event.totalTracks;
     });
 
     this.wsService.finished$.subscribe(event => {
-      console.log('🏁 [Play] Blindtest finished:', event);
+      console.log('[Play] Blindtest finished:', event);
       this.isFinished = true;
       this.stopTimer();
       this.stopSpectrum();
@@ -75,23 +70,10 @@ export class PlayComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    console.log('🎮 [Play] Component destroyed');
+    console.log('[Play] Component destroyed');
     this.stopTimer();
     this.stopSpectrum();
     this.wsService.disconnect();
-  }
-
-  private generateParticles(): void {
-    const emojis = ['🎵', '🎶', '🎸', '🎹', '🎤', '🎧', '🎺', '🎷', '🥁', '🎻'];
-    
-    for (let i = 0; i < 15; i++) {
-      this.particles.push({
-        emoji: emojis[Math.floor(Math.random() * emojis.length)],
-        x: Math.random() * 100,
-        delay: Math.random() * 5,
-        duration: 8 + Math.random() * 4
-      });
-    }
   }
 
   private handlePhaseChange(event: PhaseEvent): void {
@@ -141,18 +123,16 @@ export class PlayComponent implements OnInit, OnDestroy {
     }
   }
 
-  // Animation du spectre audio avec variations plus réalistes
   private startSpectrum(): void {
     this.stopSpectrum();
     
     this.spectrumIntervalId = setInterval(() => {
       this.spectrumBars = this.spectrumBars.map((_, index) => {
-        // Variation plus naturelle avec une base + oscillation
         const base = 30 + Math.sin(Date.now() / 1000 + index) * 20;
         const variation = Math.random() * 60;
         return base + variation;
       });
-    }, 80); // Plus rapide pour plus de fluidité
+    }, 80);
   }
 
   private stopSpectrum(): void {
@@ -163,7 +143,6 @@ export class PlayComponent implements OnInit, OnDestroy {
     }
   }
 
-  // Calcul de la position circulaire pour chaque barre
   getBarTransform(index: number, height: number): string {
     const totalBars = this.spectrumBars.length;
     const angle = (index / totalBars) * 360;
@@ -173,7 +152,7 @@ export class PlayComponent implements OnInit, OnDestroy {
   }
 
   goBack(): void {
-    this.router.navigate(['/playlists']);
+    this.router.navigate(['/home']);
   }
 
   goHome(): void {

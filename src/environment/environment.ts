@@ -1,5 +1,5 @@
 export const environment = {
-  apiBaseUrl: 'http://localhost:8080',
-  apiSpotifyUrl : '/auth/spotify',
-  apiBlindtestUrl : '/blindtest'
+  apiBaseUrl: '#{API_BASE_URL}#',
+  apiSpotifyUrl: '/auth/spotify',
+  apiBlindtestUrl: '/blindtest'
 };
